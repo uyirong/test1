@@ -1,18 +1,24 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+# 指定工作流程的名称
+name: learn-github-actions
+# 指定此工作流程的触发事件Event。 此示例使用 推送 事件，即执行push后，触发该流水线的执行
 on: [push]
+# 存放 learn-github-actions 工作流程中的所有Job
 jobs:
-  Explore-GitHub-Actions:
+  # 指定一个Job的名称为check-bats-version
+  check-bats-version:
+    # 指定该Job在最新版本的 Ubuntu Linux 的 Runner(运行器)上运行
     runs-on: ubuntu-latest
+    # 存放 check-bats-version 作业中的所有Step
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v3
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+      # step-no.1: 运行actions/checkout@v3操作，操作一般用uses来调用，
+      # 一般用于处理一些复杂又频繁的操作例如拉取分支，安装插件
+      # 此处 actions/checkout 操作是从仓库拉取代码到Runner里的操作
+      - uses: actions/checkout@v3
+      # step-no.2: actions/setup-node@v3 操作来安装指定版本的 Node.js，此处指定安装的版本为v14
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "14"
+      # step-no.3: 运行命令行下载bats依赖到全局环境中
+      - run: npm install -g bats
+      # step-no.4: 运行命令行查看bats依赖的版本
+      - run: bats -v
